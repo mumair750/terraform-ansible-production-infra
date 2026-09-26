@@ -1,0 +1,96 @@
+---
+- name: Create monitoring stack directory
+  file:
+    path: /opt/monitoring
+    state: directory
+    mode: '0755'
+
+- name: Create prometheus directory
+  file:
+    path: /opt/monitoring/prometheus
+    state: directory
+    mode: '0755'
+
+- name: Create alertmanager directory
+  file:
+    path: /opt/monitoring/alertmanager
+    state: directory
+    mode: '0755'
+
+- name: Create grafana directory
+  file:
+    path: /opt/monitoring/grafana
+    state: directory
+    mode: '0755'
+
+- name: Copy prometheus config
+  copy:
+    src: prometheus.yml
+    dest: /opt/monitoring/prometheus/prometheus.yml
+    mode: '0644'
+
+- name: Copy prometheus alert rules
+  copy:
+    src: alert-rules.yml
+    dest: /opt/monitoring/prometheus/alert-rules.yml
+    mode: '0644'
+
+- name: Copy alertmanager config
+  copy:
+    src: alertmanager.yml
+    dest: /opt/monitoring/alertmanager/alertmanager.yml
+    mode: '0644'
+
+- name: Copy docker-compose file
+  copy:
+    src: docker-compose.yml
+    dest: /opt/monitoring/docker-compose.yml
+    mode: '0644'
+
+- name: Start monitoring stack
+  shell: |
+    cd /opt/monitoring
+    docker compose down 2>/dev/null || true
+    docker compose up -d
+  args:
+    chdir: /opt/monitoring
+
+- name: Wait for containers to be running
+  shell: docker ps --format '{{ "{{" }}.Names{{ "}}" }}' | grep -E 'prometheus|grafana|alertmanager' | wc -l
+  register: container_count
+  until: container_count.stdout | int >= 3
+  retries: 10
+  delay: 5
+
+- name: Show running containers
+  shell: docker ps --format 'table {{ "{{" }}.Names{{ "}}" }}\t{{ "{{" }}.Status{{ "}}" }}\t{{ "{{" }}.Ports{{ "}}" }}'
+  register: docker_ps
+  changed_when: false
+
+- name: Display containers
+  debug:
+    msg: "{{ docker_ps.stdout_lines }}"
+
+- name: Health check - Prometheus
+  uri:
+    url: http://localhost:9090/-/healthy
+    return_content: yes
+  register: prom_health
+  until: prom_health.status == 200
+  retries: 10
+  delay: 5
+
+- name: Health check - Grafana
+  uri:
+    url: http://localhost:3000/api/health
+    return_content: yes
+  register: grafana_health
+  until: grafana_health.status == 200
+  retries: 10
+  delay: 5
+
+- name: Show health status
+  debug:
+    msg:
+      - "Prometheus: {{ prom_health.status }}"
+      - "Grafana: {{ grafana_health.status }}"

@@ -1,0 +1,29 @@
+---
+- name: Configure all servers with common setup
+  hosts: all
+  become: yes
+  roles:
+    - common
+
+- name: Configure Bastion Host
+  hosts: bastion
+  become: yes
+  roles:
+    - node-exporter
+
+- name: Configure Application Servers
+  hosts: app_servers
+  become: yes
+  roles:
+    - docker
+    - nginx
+    - node-exporter
+    - promtail
+
+- name: Configure Monitoring Server
+  hosts: monitoring
+  become: yes
+  roles:
+    - docker
+    - node-exporter
+    - monitoring

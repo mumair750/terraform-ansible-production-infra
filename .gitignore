@@ -1,0 +1,21 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+crash.log
+
+# Ansible
+*.retry
+ansible/inventory/*/hosts.ini
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+
+# SSH Keys
+*.pem
+*.key
+prod-infra-key.pem
