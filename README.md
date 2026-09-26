@@ -52,7 +52,7 @@ This project demonstrates a real-world DevOps workflow — building, deploying, 
 
 ---
 
-##  Project Structure
+## 📁 Project Structure
 terraform-ansible-production-infra/
 ├── terraform/
 │ ├── modules/
