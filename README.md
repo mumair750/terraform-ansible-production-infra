@@ -53,32 +53,43 @@ This project demonstrates a real-world DevOps workflow — building, deploying, 
 ---
 
 ## 📁 Project Structure
+
+```
 terraform-ansible-production-infra/
 ├── terraform/
-│ ├── modules/
-│ │ ├── vpc/
-│ │ ├── ec2/
-│ │ ├── alb/
-│ │ └── security-groups/
-│ └── environments/
-│ └── dev/
+│   ├── modules/
+│   │   ├── vpc/
+│   │   ├── ec2/
+│   │   ├── alb/
+│   │   ├── security-groups/
+│   │   └── rds/
+│   └── environments/
+│       └── dev/
 ├── ansible/
-│ ├── inventory/
-│ ├── playbooks/
-│ └── roles/
-│ ├── common/
-│ ├── docker/
-│ ├── nginx/
-│ ├── node-exporter/
-│ ├── promtail/
-│ └── monitoring/
+│   ├── inventory/
+│   │   └── dev/
+│   ├── playbooks/
+│   └── roles/
+│       ├── common/
+│       ├── docker/
+│       ├── nginx/
+│       ├── node-exporter/
+│       ├── promtail/
+│       └── monitoring/
 ├── monitoring/
-│ ├── prometheus/
-│ ├── alertmanager/
-│ └── docker-compose.yml
-└── docker/
-└── app/
-
+│   ├── prometheus/
+│   ├── alertmanager/
+│   └── docker-compose.yml
+├── docker/
+│   └── app/
+├── docs/
+│   ├── architecture.png
+│   ├── grafana.png
+│   └── prometheus.png
+├── .gitignore
+├── LICENSE
+└── README.md
+```
 ##  Prerequisites
 
 - AWS Account with IAM user (programmatic access)
